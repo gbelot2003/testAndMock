@@ -15,7 +15,7 @@ class SystemMessage:
 
             # Crear una instancia de ActionHandleService
             action_handle_service = ActionHandleService(user_id, prompt)
-            messages = action_handle_service.handle_actions()
+            messages = action_handle_service.handle_action()
 
             # Agregar el mensaje actual del usuario
             messages.append({"role": "user", "content": prompt})
