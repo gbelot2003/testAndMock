@@ -4,3 +4,4 @@ SQLAlchemy==1.4.23
 openai
 Flask-Migrate
 pytest
+python-dotenv
