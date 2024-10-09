@@ -1,9 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from app.services.action_handler import ActionHandleService
-from app.actions.name_action import NameAction
 from app.actions.verify_contact_action import VerifyContactAction
-from app.models.contact_model import Contact as Contacto
+from app.actions.name_action import NameAction
+from app.services.action_handler import ActionHandleService
 
 # Mock de la clase Contact
 class MockContact:
@@ -25,11 +24,8 @@ def test_handle_action_with_existing_contact(mock_process_name, mock_verificar_c
     # Configurar el mock para que devuelva un mensaje de nombre
     mock_process_name.return_value = {"role": "assistant", "content": "El usuario se llama y llamalo Juan."}
 
-    # Crear una sesión de base de datos simulada
-    db_session = MagicMock()
-
     # Crear una instancia de ActionHandleService
-    action_handler = ActionHandleService(user_id="1234567890", prompt="Hola, mi nombre es Juan", db_session=db_session)
+    action_handler = ActionHandleService(user_id="1234567890", prompt="Hola, mi nombre es Juan")
 
     # Llamar al método a probar
     messages = action_handler.handle_action()
@@ -52,11 +48,8 @@ def test_handle_action_with_new_contact(mock_process_name, mock_verificar_contac
     # Configurar el mock para que devuelva un mensaje de nombre
     mock_process_name.return_value = {"role": "assistant", "content": "El usuario se llama y llamalo Pedro."}
 
-    # Crear una sesión de base de datos simulada
-    db_session = MagicMock()
-
     # Crear una instancia de ActionHandleService
-    action_handler = ActionHandleService(user_id="0987654321", prompt="Hola, mi nombre es Pedro", db_session=db_session)
+    action_handler = ActionHandleService(user_id="0987654321", prompt="Hola, mi nombre es Pedro")
 
     # Llamar al método a probar
     messages = action_handler.handle_action()

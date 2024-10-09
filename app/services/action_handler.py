@@ -6,14 +6,13 @@ from app.actions.verify_contact_action import VerifyContactAction
 
 
 class ActionHandleService:
-    def __init__(self, user_id, prompt, db_session):
+    def __init__(self, user_id, prompt):
         """
         Inicializa el servicio con los datos del usuario y el contexto del prompt.
         """
         self.user_id = user_id
         self.prompt = prompt
         self.messages = []
-        self.db_session = db_session  # Se añade la sesión de la base de datos como parámetro
 
     def handle_action(self):
         """
