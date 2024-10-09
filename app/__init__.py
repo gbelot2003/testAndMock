@@ -11,7 +11,8 @@ def create_app(config_name='development'):
     db.init_app(app)
 
     # Importar modelos
-    from .models import Conversation
+    from .models import Contact, Address
+
 
     # Registro de rutas
     from . import routes
