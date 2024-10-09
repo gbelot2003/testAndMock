@@ -11,3 +11,12 @@ class Conversation(db.Model):
 
     def __repr__(self):
         return f'<Conversation {self.id}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_message': self.user_message,
+            'bot_response': self.bot_response,
+            'user_id': self.user_id,
+            'timestamp': self.timestamp.isoformat()
+        }
