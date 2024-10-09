@@ -1,5 +1,3 @@
-# app/extractors/name_extractor.py
-
 import re
 import logging
 
@@ -31,6 +29,8 @@ class NombreExtractor:
             r"hola, es\s+([a-zA-Z]+)",  # "Hola, es Juan"
             r"hola, soy el/la\s+([a-zA-Z]+)",  # "Hola, soy el Juan"
             r"hola, por favor, llámame\s+([a-zA-Z]+)",  # "Hola, por favor, llámame Juan"
+            r"soy el/la\s+([a-zA-Z\s]+)",  # "Soy el Juan" o "Soy la Ana"
+            r"hola, soy el/la\s+([a-zA-Z\s]+)",  # "Hola, soy el Juan" o "Hola, soy la Ana"
         ]
 
     def extraer_nombre(self, texto):
