@@ -17,7 +17,7 @@ class OpenAIService:
             respuesta_modelo = SystemMessage().handle_request(prompt)
 
             # Guardar la conversión del modelo en la base de datos
-            #ConversacionRepo().crear_conversacion(prompt, respuesta_modelo, from_number)
+            ConversacionRepo().crear_conversacion(prompt, respuesta_modelo, from_number)
 
             # Imprimir la respuesta generada por el modelo
             print(f"GPT: {respuesta_modelo}")
