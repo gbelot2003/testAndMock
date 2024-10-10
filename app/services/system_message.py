@@ -4,14 +4,25 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from app.services.action_handler import ActionHandleService
+
 load_dotenv(override=True)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 class SystemMessage:
-     def handle_request(self, prompt, from_number=None):
+    def __init__(self, db_session):
+        self.db_session = db_session
+
+    
+    def handle_request(self, prompt, from_number):
         try:
             # Definir el prompt del usuario
             messages = []
+
+            # Crear una instancia de ActionHandleService
+            action_handle_service = ActionHandleService(prompt, from_number, self.db_session)
+            action_handle_service.handle_action(from_number)
+            
 
             # Agregar el mensaje actual del usuario
             messages.append({"role": "user", "content": prompt})
