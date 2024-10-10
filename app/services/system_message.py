@@ -8,7 +8,7 @@ load_dotenv(override=True)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 class SystemMessage:
-     def handle_request(self, prompt):
+     def handle_request(self, prompt, from_number=None):
         try:
             # Definir el prompt del usuario
             messages = []
