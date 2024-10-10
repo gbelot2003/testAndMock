@@ -12,6 +12,7 @@ class NameAction:
         message = None
         # Si el contacto tiene un nombre, usarlo en la conversación
         if self.contacto.nombre:
+            print(f"El usuario se llama y llamalo {self.contacto.nombre}.")
             message = {"role": "assistant", "content": f"El usuario se llama y llamalo {self.contacto.nombre}."}
         else:
             extraerNombre = NombreExtractor().extraer_nombre(self.prompt)            # grabar nombre en base de datos
