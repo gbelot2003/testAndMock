@@ -1,25 +1,55 @@
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 from app.services.action_handler import ActionHandleService
 from app.actions.verify_contact_action import VerifyContactAction
 
-# Prueba para verificar que el método `verificar_contacto` de `VerifyContactAction` es llamado correctamente
-@patch('app.actions.verify_contact_action.VerifyContactAction.verificar_contacto')
-def test_handle_action_verificar_contacto(mock_verificar_contacto):
-    # Configurar el mock para retornar un contacto simulado
-    mock_contacto = MagicMock()
-    mock_verificar_contacto.return_value = mock_contacto
+@patch('app.services.action_handler.VerifyContactAction')
+def test_handle_action_verificar_contacto(mock_verify_contact_action):
+    # Crear un mock para la sesión de la base de datos
+    mock_db_session = MagicMock()
+    
+    # Crear un mock para la acción de verificar contacto
+    mock_verify_contact_action.return_value = MagicMock()
+    mock_verify_contact_action.return_value.verificar_contacto.return_value = {
+        'id': 1,
+        'nombre': 'Carlos Sanchez',
+        'telefono': '1122334455'
+    }
+    
+    # Crear una instancia del servicio pasando mock_db_session
+    action_handler = ActionHandleService(mock_db_session)
+    
+    # Ejecutar la acción y verificar el resultado
+    resultado = action_handler.handle_action("verificar_contacto", {"telefono": "1122334455"})
+    
+    # Validar que se haya retornado el resultado esperado
+    assert resultado == {
+        'id': 1,
+        'nombre': 'Carlos Sanchez',
+        'telefono': '1122334455'
+    }
 
-    # Crear una instancia de `ActionHandleService`
-    prompt = "Hola, quiero verificar mi contacto."
-    from_number = "123456789"
-    action_service = ActionHandleService(prompt, from_number)
-
-    # Llamar al método `handle_action`
-    messages = action_service.handle_action()
-
-    # Verificar que `verificar_contacto` se llamó con el número de teléfono correcto
-    mock_verificar_contacto.assert_called_once_with(from_number)
-
-    # Verificar que `handle_action` retorne la estructura correcta de `messages`
-    assert isinstance(messages, list)
+@patch('app.services.action_handler.VerifyContactAction')
+def test_handle_action_crear_contacto(mock_verify_contact_action):
+    # Crear un mock para la sesión de la base de datos
+    mock_db_session = MagicMock()
+    
+    # Simular la creación de un nuevo contacto
+    mock_verify_contact_action.return_value = MagicMock()
+    mock_verify_contact_action.return_value.verificar_contacto.return_value = {
+        'id': 2,
+        'nombre': 'Ana Lopez',
+        'telefono': '2233445566'
+    }
+    
+    # Crear una instancia del servicio pasando mock_db_session
+    action_handler = ActionHandleService(mock_db_session)
+    
+    # Ejecutar la acción y verificar el resultado
+    resultado = action_handler.handle_action("crear_contacto", {"telefono": "2233445566", "nombre": "Ana Lopez"})
+    
+    # Validar que se haya retornado el contacto creado correctamente
+    assert resultado == {
+        'id': 2,
+        'nombre': 'Ana Lopez',
+        'telefono': '2233445566'
+    }
