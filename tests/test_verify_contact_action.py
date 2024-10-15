@@ -48,3 +48,4 @@ def test_crear_contacto_si_no_existe(mock_contact_repo):
     # Ejecutar la acción de verificar contacto y pasar mock_db_session
     resultado = VerifyContactAction(mock_db_session).verificar_contacto("2233445566")
     assert resultado == mock_contacto_creado
+
