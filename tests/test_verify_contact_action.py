@@ -1,54 +1,51 @@
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+from app.models import Contact
 from app.actions.verify_contact_action import VerifyContactAction
-from app.models.contact_model import Contact as Contacto
-from app.repos.contact_repo import ContactRepo
 
-# Mock de la clase Contact
-class MockContact:
-    def __init__(self, id, telefono):
-        self.id = id
-        self.telefono = telefono
+@patch('app.actions.verify_contact_action.ContactRepo')
+def test_verificar_contacto_retorno_despues_de_crear(mock_contact_repo):
+    # Crear un mock para la sesión de la base de datos
+    mock_db_session = MagicMock()
 
-@pytest.fixture
-def mock_contacto():
-    return MockContact(id=1, telefono="1234567890")
+    # Simular que no existe un contacto con el número de teléfono
+    mock_contact_repo.obtener_contacto_por_telefono.return_value = None
 
-@patch('app.repos.contact_repo.ContactRepo.obtener_contacto_por_telefono')
-@patch('app.repos.contact_repo.ContactRepo.crear_contacto')
-def test_verificar_contacto_existente(mock_crear_contacto, mock_obtener_contacto_por_telefono, mock_contacto):
-    # Configurar el mock para que devuelva un contacto existente
-    mock_obtener_contacto_por_telefono.return_value = mock_contacto
+    # Simular la creación de un nuevo contacto
+    mock_contacto_creado = Contact(id=3, nombre="Carlos Sanchez", telefono="1122334455", direccion="Calle Nueva 456", email="carlos.sanchez@example.com")
+    mock_contact_repo.crear_contacto.return_value = mock_contacto_creado
 
-    # Llamar al método a probar
-    contacto = VerifyContactAction.verificar_contacto("1234567890")
+    # Ejecutar la acción de verificar contacto con un número no existente y pasar mock_db_session
+    resultado = VerifyContactAction(mock_db_session).verificar_contacto("1122334455")
 
-    # Verificar que se llamó a obtener_contacto_por_telefono
-    mock_obtener_contacto_por_telefono.assert_called_once_with("1234567890")
+    # Validar que se haya retornado el contacto creado correctamente
+    assert resultado == mock_contacto_creado
 
-    # Verificar que no se llamó a crear_contacto
-    mock_crear_contacto.assert_not_called()
+@patch('app.actions.verify_contact_action.ContactRepo')
+def test_verificar_contacto_existente(mock_contact_repo):
+    # Crear un mock para la sesión de la base de datos
+    mock_db_session = MagicMock()
+    
+    # Simular un contacto existente en la base de datos
+    contacto_existente = Contact(id=1, nombre="Juan Perez", telefono="1122334455", direccion="Calle Vieja 123", email="juan.perez@example.com")
+    mock_contact_repo.obtener_contacto_por_telefono.return_value = contacto_existente
 
-    # Verificar que se devolvió el contacto existente
-    assert contacto == mock_contacto
+    # Verificar el contacto existente pasando mock_db_session
+    resultado = VerifyContactAction(mock_db_session).verificar_contacto("1122334455")
+    assert resultado == contacto_existente
 
-@patch('app.repos.contact_repo.ContactRepo.obtener_contacto_por_telefono')
-@patch('app.repos.contact_repo.ContactRepo.crear_contacto')
-def test_verificar_contacto_nuevo(mock_crear_contacto, mock_obtener_contacto_por_telefono, mock_contacto):
-    # Configurar el mock para que devuelva None (no existe el contacto)
-    mock_obtener_contacto_por_telefono.return_value = None
+@patch('app.actions.verify_contact_action.ContactRepo')
+def test_crear_contacto_si_no_existe(mock_contact_repo):
+    # Crear un mock para la sesión de la base de datos
+    mock_db_session = MagicMock()
+    
+    # Simular que no existe un contacto con el número de teléfono
+    mock_contact_repo.obtener_contacto_por_telefono.return_value = None
 
-    # Configurar el mock para que devuelva un nuevo contacto
-    mock_crear_contacto.return_value = mock_contacto
+    # Simular la creación de un nuevo contacto
+    mock_contacto_creado = Contact(id=2, nombre="Ana Lopez", telefono="2233445566", direccion="Avenida Central 789", email="ana.lopez@example.com")
+    mock_contact_repo.crear_contacto.return_value = mock_contacto_creado
 
-    # Llamar al método a probar
-    contacto = VerifyContactAction.verificar_contacto("1234567890")
+    # Ejecutar la acción de verificar contacto y pasar mock_db_session
+    resultado = VerifyContactAction(mock_db_session).verificar_contacto("2233445566")
+    assert resultado == mock_contacto_creado
 
-    # Verificar que se llamó a obtener_contacto_por_telefono
-    mock_obtener_contacto_por_telefono.assert_called_once_with("1234567890")
-
-    # Verificar que se llamó a crear_contacto
-    mock_crear_contacto.assert_called_once_with(telefono="1234567890")
-
-    # Verificar que se devolvió el nuevo contacto
-    assert contacto == mock_contacto

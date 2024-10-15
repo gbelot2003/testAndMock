@@ -2,6 +2,7 @@
 
 from app.repos.conversation_repo import ConversacionRepo
 from app.services.system_message import SystemMessage
+from app import db
 
 class OpenAIService:
 
@@ -14,13 +15,13 @@ class OpenAIService:
             # Imprimir el prompt del usuario
             print(f"Usuario: {prompt}")
             
-            respuesta_modelo = SystemMessage().handle_request(prompt)
-
-            # Guardar la conversión del modelo en la base de datos
-            ConversacionRepo().crear_conversacion(prompt, respuesta_modelo, from_number)
+            respuesta_modelo = SystemMessage(db.session).handle_request(prompt, from_number)
 
             # Imprimir la respuesta generada por el modelo
             print(f"GPT: {respuesta_modelo}")
+
+            # Guardar la conversión del modelo en la base de datos
+            ConversacionRepo().crear_conversacion(prompt, respuesta_modelo, from_number)
 
             return {"status": "success", "response": respuesta_modelo}
         except Exception as e:

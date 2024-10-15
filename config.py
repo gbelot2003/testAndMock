@@ -21,8 +21,14 @@ class DefaultConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'default_database.sqlite')
 
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+
+
 config = {
     'development': DevelopmentConfig,
     'deploy': DeployConfig,
-    'default': DefaultConfig
+    'default': DefaultConfig,
+    'test': TestConfig
 }

@@ -1,33 +1,40 @@
 # app/services/action_handler.py
-import logging
 
+from app.actions.conversation_history_action import ConversationHistoryAction
 from app.actions.name_action import NameAction
 from app.actions.verify_contact_action import VerifyContactAction
-
+from app.repos.chromadb_repo import ChromaDBRepo
 
 class ActionHandleService:
-    def __init__(self, user_id, prompt, db_session):
-        """
-        Inicializa el servicio con los datos del usuario y el contexto del prompt.
-        """
-        self.user_id = user_id
+    def __init__(self, prompt, from_number, db_session):
+        self.from_number = from_number
         self.prompt = prompt
+        self.db_session = db_session
         self.messages = []
-        self.db_session = db_session  # Se añade la sesión de la base de datos como parámetro
 
-    def handle_action(self):
+    def handle_action(self, from_number):
         """
-        Maneja las acciones basadas en el prompt del usuario.
+        Maneja la acción principal de verificar el contacto.
         """
-        logging.info("Iniciando handle_actions con prompt: %s", self.prompt)
+        # Verificar si el usuario tiene un número de teléfono en la base de datos usando `VerifyContactAction`
+        contacto = VerifyContactAction.verificar_contacto(from_number, self.db_session)
 
-        # Verificar si el usuario tiene un número de teléfono en la base de datos
-        contacto = VerifyContactAction().verificar_contacto(self.user_id)
+        # Buscar historial de conversación
+        conversation_history_action = ConversationHistoryAction()
+        chat_history_messages = conversation_history_action.compilar_conversacion(self.from_number)
+        self.messages.extend(chat_history_messages)
+
+        # Buscar fragmentos relevantes en ChromaDB
+        chromadb_repo = ChromaDBRepo()
+        relevant_chunks = chromadb_repo.buscar_fragmentos_relevantes(self.prompt)
+        if relevant_chunks:
+            self.messages.append(relevant_chunks)
 
         # Procesar el nombre del contacto
-        name_action = NameAction(contacto, self.prompt)
+        name_action = NameAction(db_session = self.db_session, contacto = contacto, prompt= self.prompt)
         name_message = name_action.process_name()
         if name_message:
             self.messages.append(name_message)
-        
+
+        # Puedes agregar más lógica aquí según lo que necesites
         return self.messages

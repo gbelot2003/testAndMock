@@ -4,9 +4,7 @@ from app import create_app
 @pytest.fixture
 def app():
     app = create_app()
-    app.config.update({
-        "TESTING": True,
-    })
+    app.config.from_object('config.TestConfig')
     yield app
 
 @pytest.fixture
