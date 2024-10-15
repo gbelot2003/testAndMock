@@ -3,6 +3,7 @@
 from app.actions.conversation_history_action import ConversationHistoryAction
 from app.actions.name_action import NameAction
 from app.actions.verify_contact_action import VerifyContactAction
+from app.repos.chromadb_repo import ChromaDBRepo
 
 class ActionHandleService:
     def __init__(self, prompt, from_number, db_session):
@@ -23,13 +24,17 @@ class ActionHandleService:
         chat_history_messages = conversation_history_action.compilar_conversacion(self.from_number)
         self.messages.extend(chat_history_messages)
 
+        # Buscar fragmentos relevantes en ChromaDB
+        chromadb_repo = ChromaDBRepo()
+        relevant_chunks = chromadb_repo.buscar_fragmentos_relevantes(self.prompt)
+        if relevant_chunks:
+            self.messages.append(relevant_chunks)
+
         # Procesar el nombre del contacto
         name_action = NameAction(db_session = self.db_session, contacto = contacto, prompt= self.prompt)
         name_message = name_action.process_name()
         if name_message:
             self.messages.append(name_message)
 
-
-        
         # Puedes agregar más lógica aquí según lo que necesites
         return self.messages

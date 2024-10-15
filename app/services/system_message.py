@@ -23,9 +23,10 @@ class SystemMessage:
             action_handle_service = ActionHandleService(prompt, from_number, self.db_session)
             messages = action_handle_service.handle_action(from_number)
             
-
             # Agregar el mensaje actual del usuario
             messages.append({"role": "user", "content": prompt})
+
+            print(messages)
 
             # Enviar los mensajes a la API de OpenAI
             response = client.chat.completions.create(
