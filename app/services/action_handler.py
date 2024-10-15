@@ -17,7 +17,12 @@ class ActionHandleService:
         Maneja la acción principal de verificar el contacto.
         """
         # Verificar si el usuario tiene un número de teléfono en la base de datos usando `VerifyContactAction`
-        contacto = VerifyContactAction.verificar_contacto(from_number, self.db_session)
+        try:
+            contacto = VerifyContactAction.verificar_contacto(from_number, self.db_session)
+            print(f"Contacto verificado: {contacto}")
+        except Exception as e:
+            print(f"Error al verificar el número de tel Opportuno: {e}")
+            contacto = None
 
         # Buscar historial de conversación
         conversation_history_action = ConversationHistoryAction()
