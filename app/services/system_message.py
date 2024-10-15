@@ -21,7 +21,7 @@ class SystemMessage:
 
             # Crear una instancia de ActionHandleService
             action_handle_service = ActionHandleService(prompt, from_number, self.db_session)
-            action_handle_service.handle_action(from_number)
+            messages = action_handle_service.handle_action(from_number)
             
 
             # Agregar el mensaje actual del usuario
