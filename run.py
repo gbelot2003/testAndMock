@@ -5,6 +5,7 @@ from app.models import Conversation
 app = create_app(config_name='development')
 
 def create_database():
+
     with app.app_context():
         db_path = app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', '')
         if not os.path.exists(db_path):

@@ -17,7 +17,7 @@ class ChromaDBRepo:
         if relevant_chunks:
             relevant_info = "\n".join(relevant_chunks)
             return {
-                "role": "system",
+                "role": "assistant",
                 "content": f"Información relevante:\n{relevant_info}",
             }
         return None
