@@ -6,3 +6,5 @@ Flask-Migrate
 pytest
 pytest-flask
 python-dotenv
+chromadb
+pymupdf
