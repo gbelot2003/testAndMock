@@ -15,7 +15,11 @@ def create_app(config_name='deploy'):
 
     # Lista de rutas de archivos PDF
     pdf_paths = [
-        "files/encomiendas.pdf",
+        "files/codigo_civil_mayo_2018.pdf",
+        "files/codigo_de_trabajo.pdf",
+        "files/codigo_penal_octubre_2018.pdf",
+        "files/codigo_tributario.pdf",
+        "files/Ley-de-Inquilinato-Honduras.pdf",
         # Agrega más rutas de archivos PDF aquí
     ]
 

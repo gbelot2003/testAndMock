@@ -2,7 +2,7 @@ import os
 from app import create_app, db
 from app.models import Conversation
 
-app = create_app(config_name='development')
+app = create_app(config_name='default')
 
 def create_database():
     with app.app_context():
